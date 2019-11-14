@@ -9,5 +9,5 @@ if (Module['preRun'] instanceof Array) {
 
 function environment_variables() {
   // Setup environment variables
-  // ENV.<...> = <...>
+  // ENV['...'] = '...'
 }
