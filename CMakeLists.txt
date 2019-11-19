@@ -148,6 +148,8 @@ endif ()
 # Set back standard behavior (malloc does not abort on failure)
 set(emscripten_common_ldflags "${emscripten_common_ldflags} -s ABORTING_MALLOC=0")
 
+#set(emscripten_common_ldflags "${emscripten_common_ldflags} -s PRECISE_F32=2")
+
 # Additional linker option for LTO
 if (ENABLE_LTO)
   set(emscripten_common_ldflags "${emscripten_common_ldflags} --llvm-lto 1")
@@ -159,10 +161,6 @@ endif ()
 #set(emscripten_common_ldflags "${emscripten_common_ldflags} --pre-js $ENV{EMSCRIPTEN}/src/emscripten-source-map.min.js")
 #endif()
 
-# GL Tweaking to reduce JS support code
-#set(emscripten_main_ldflags "${emscripten_main_ldflags} -s GL_POOL_TEMP_BUFFERS=0")
-#set(emscripten_main_ldflags "${emscripten_main_ldflags} -s GL_TRACK_ERRORS=0")
-
 # setup environment variables
 set(emscripten_common_ldflags "${emscripten_common_ldflags} --pre-js ${CMAKE_CURRENT_SOURCE_DIR}/src/js/environment_variables.js")
 
@@ -173,11 +171,21 @@ set(emscripten_common_ldflags "${emscripten_common_ldflags} --pre-js ${CMAKE_CUR
 set(emscripten_common_ldflags "${emscripten_common_ldflags} --post-js ${CMAKE_CURRENT_SOURCE_DIR}/src/js/export_fs.js")
 set(emscripten_common_ldflags "${emscripten_common_ldflags} -s EXTRA_EXPORTED_RUNTIME_METHODS=[\"FS\",\"FS_readFile\",\"FS_mkdir\",\"FS_writeFile\",\"FS_unlink\",\"FS_mount\"\"FS_rmdir\"]")
 
+# typical exports, so that closure compiler does not change their names
+set(emscripten_common_ldflags "${emscripten_common_ldflags} -s EXTRA_EXPORTED_RUNTIME_METHODS=[\"ENV\",\"IDBFS\",\"FS_readFile\",\"FS_mkdir\",\"FS_writeFile\",\"FS_unlink\",\"FS_mount\",\"FS_rmdir\",\"FS_createPath\",\"FS_syncfs\"]")
+
 # Main browser thread linker options
 # Environment is 'web'
 set(emscripten_main_ldflags "${emscripten_main_ldflags}   -s ENVIRONMENT=web")
 # Export as ES6 module
-# set(emscripten_main_ldflags "${emscripten_main_ldflags}   -s EXPORT_ES6=1")
+# set(emscripten_main_ldflags "${emscripten_main_ldflags} -s EXPORT_ES6=1")
+# set(emscripten_main_ldflags "${emscripten_main_ldflags} -s USE_ES6_IMPORT_META=0")
+
+# GL Tweaking to reduce JS support code
+#set(emscripten_main_ldflags "${emscripten_main_ldflags} -s GL_POOL_TEMP_BUFFERS=0")
+#set(emscripten_main_ldflags "${emscripten_main_ldflags} -s GL_TRACK_ERRORS=0")
+
+#set(emscripten_main_ldflags "${emscripten_main_ldflags} -s SUPPORT_LONGJMP=0")
 
 # Worker thread linker options
 # Environment is 'worker'
