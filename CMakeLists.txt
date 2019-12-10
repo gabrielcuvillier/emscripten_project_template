@@ -39,10 +39,6 @@ set(ENABLE_EMBIND OFF CACHE BOOL "Enable Embind")
 set(ENABLE_EXTRA_COMPILATION_OPTIONS OFF CACHE BOOL "")
 
 ## Global compilation options
-# setup empty flags initially. This will be filled by later code in the CMakefile
-SET(CMAKE_C_FLAGS " " CACHE INTERNAL "")
-SET(CMAKE_CXX_FLAGS " " CACHE INTERNAL "")
-SET(CMAKE_EXE_LINKER_FLAGS " " CACHE INTERNAL "")
 
 # Use C++ 17 standard for the whole project
 set(CMAKE_CXX_STANDARD 17)
@@ -50,7 +46,7 @@ set(CMAKE_CXX_STANDARD 17)
 # Enable all warnings
 add_compile_options(-Wall)
 # Strict mode ON by default
-add_compile_options(-s STRICT=1)
+add_compile_options("-s STRICT=1")
 
 if (ENABLE_EXTRA_COMPILATION_OPTIONS)
   # save a couple of additional bytes...
@@ -64,6 +60,7 @@ endif ()
 
 if (ENABLE_THREADS)
   add_compile_options(-threads)
+  add_compile_options("-s USE_PTHREADS=1")
 endif ()
 
 if (ENABLE_EXCEPTIONS)
@@ -80,14 +77,16 @@ else ()
   add_compile_options(-fno-rtti)
 endif ()
 
+SET(CMAKE_EXE_LINKER_FLAGS "" CACHE INTERNAL "")
+
 if (ENABLE_O1)
   SET(CMAKE_C_FLAGS_DEBUG "-O1 -g2" CACHE INTERNAL "")
   SET(CMAKE_CXX_FLAGS_DEBUG "-O1 -g2" CACHE INTERNAL "")
-  SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "-O1" CACHE INTERNAL "")
+  SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "-O1 -g2" CACHE INTERNAL "")
 else ()
   SET(CMAKE_C_FLAGS_DEBUG "-O0 -g2" CACHE INTERNAL "")
   SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g2" CACHE INTERNAL "")
-  SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "-O0" CACHE INTERNAL "")
+  SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "-O0 -g2" CACHE INTERNAL "")
 endif ()
 
 if (ENABLE_O3)
